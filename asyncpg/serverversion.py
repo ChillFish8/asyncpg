@@ -47,11 +47,17 @@ def split_server_version_string(version_string):
         # a major version check due to a bugfix release.
         parts.insert(1, 0)
 
-    versions = [int(p) for p in parts][:3]
-    if len(versions) < 3:
-        versions += [0] * (3 - len(versions))
+    major, *rest = parts[:3]
+    if len(rest) > 0:
+        minor, *rest = rest
+    else:
+        minor = 0
 
-    versions.append(level)
-    versions.append(serial)
+    if len(rest) > 0 and rest[0].isdigit():
+        micro, _ = rest
+    else:
+        micro = 0
+
+    versions = [major, minor, micro, level, serial]
 
     return types.ServerVersion(*versions)
